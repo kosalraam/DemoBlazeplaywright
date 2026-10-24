@@ -6,18 +6,18 @@ export interface ProductRef {
 }
 
 export const PRODUCTS = {
-  phone: { name: 'Samsung galaxy s6', category: 'Phones' },
-  laptop: { name: 'Sony vaio i5', category: 'Laptops' },
+  phone: { name: 'Samsung galaxy s7', category: 'Phones' },
+  laptop: { name: 'Sony vaio i7', category: 'Laptops' },
   monitor: { name: 'Apple monitor 24', category: 'Monitors' }
 } satisfies Record<string, ProductRef>;
 
 export const CATEGORIES: Category[] = ['Phones', 'Laptops', 'Monitors'];
 
 export const VALID_ORDER = {
-  name: 'Jane Doe',
+  name: 'Kosal Raam',
   country: 'United Kingdom',
   city: 'London',
-  card: '4111111111111111',
+  card: '801511488773586670',
   month: '12',
   year: '2027'
 };
