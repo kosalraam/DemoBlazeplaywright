@@ -16,8 +16,20 @@ export class HomePage extends BasePage {
     await expect(this.productLinks.first()).toBeVisible();
   }
 
+  //async filterByCategory(category: Category): Promise<void> {
+    //await this.page.getByRole('link', { name: category, exact: true }).click();
+    //await expect.poll(async () => this.productLinks.count(), { timeout: 15_000 })
+     // .toBeGreaterThan(0);
+ // }
+
   async filterByCategory(category: Category): Promise<void> {
-    await this.page.getByRole('link', { name: category, exact: true }).click();
+    // Wait for DemoBlaze's category AJAX (byCat) so the grid has actually swapped
+    // before anyone reads it — otherwise the stale landing-page items are read.
+    await Promise.all([
+      this.page.waitForResponse((r) => r.url().includes('bycat') && r.ok()),
+      this.page.getByRole('link', { name: category, exact: true }).click(),
+    ]);
+    await expect(this.productLinks.first()).toBeVisible();
     await expect.poll(async () => this.productLinks.count(), { timeout: 15_000 })
       .toBeGreaterThan(0);
   }

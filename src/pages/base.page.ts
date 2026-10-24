@@ -16,6 +16,7 @@ export abstract class BasePage {
     return new Promise<string>((resolve) => {
       this.page.once('dialog', async (dialog) => {
         const message = dialog.message();
+        await new Promise(resolve => setTimeout(resolve, 2000));
         await dialog.accept();
         resolve(message);
       });

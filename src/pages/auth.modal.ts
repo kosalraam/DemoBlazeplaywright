@@ -34,16 +34,25 @@ export class AuthModal extends BasePage {
     await expect(this.signupModal).toBeVisible();
     await this.signupUsername.fill(username);
     await this.signupPassword.fill(password);
-
-    const dialogMessage = this.captureDialog();
-    await this.signupSubmit.click();
-    const message = await dialogMessage;
-    await this.signupModal.waitFor({ state: 'hidden', timeout: 10_000 }).catch(() => undefined);
-    await this.waitForModalsClosed();
+    
+    const [dialog] = await Promise.all([
+    this.page.waitForEvent('dialog'),   // waiter armed
+    this.signupSubmit.click(),          // action that triggers it
+     ]);
+    const message = dialog.message();
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    await dialog.accept();
     return message;
+
+  //const dialogMessage = this.captureDialog();
+  //await this.signupSubmit.click();
+  //const message = await dialogMessage;
+  // await this.signupModal.waitFor({ state: 'hidden', timeout: 10_000 }).catch(() => undefined);
+  //await this.waitForModalsClosed();
+  // return message;
   }
 
-  /** Returns null on successful login, otherwise the native alert message. */
+  /** Returns null on successful login, otherwise the negative alert message with wrong password */
   async login(username: string, password: string): Promise<string | null> {
     await this.waitForModalsClosed();
     await this.nav.openLogin();
@@ -51,17 +60,26 @@ export class AuthModal extends BasePage {
     await this.loginUsername.fill(username);
     await this.loginPassword.fill(password);
 
-    const dialogMessage = this.captureDialog();
+
+    // Two possible outcomes — whichever happens first wins:
+    const loginSucceeded = this.nav.loggedInUser
+     .waitFor({ state: 'visible', timeout: 10_000 })
+     .then(() => null as string | null);     // success → no error text
+    const loginFailed = this.captureDialog();  // failure → the alert message
+ 
     await this.loginSubmit.click();
-
-    return Promise.race<string | null>([
-      this.nav.loggedInUser.waitFor({ state: 'visible', timeout: 10_000 })
-        .then(() => null)
-        .catch(() => null),
-      dialogMessage
-    ]);
-  }
-
+ 
+   return Promise.race([loginSucceeded, loginFailed]);
+             //const dialogMessage = this.captureDialog();
+             //await this.loginSubmit.click();
+             //return Promise.race<string | null>([
+             //this.nav.loggedInUser.waitFor({ state: 'visible', timeout: 10_000 })
+             // .then(() => null)
+             // .catch(() => null),
+             // dialogMessage
+             //]);
+}
+/** Bootstrap leaves a backdrop element after closing; wait for it to detach before re-opening a modal. */
   private async waitForModalsClosed(): Promise<void> {
     await this.page.locator('.modal-backdrop')
       .waitFor({ state: 'detached', timeout: 5_000 })
