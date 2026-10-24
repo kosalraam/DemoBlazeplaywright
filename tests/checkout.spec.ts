@@ -2,7 +2,7 @@ import { test, expect } from '../src/fixtures/test-options';
 import { PRODUCTS, VALID_ORDER } from '../src/data/products';
 
 test.describe('Checkout', () => {
-  test('a shopper can complete an end-to-end purchase @smoke', async ({
+  test('TC01-Edge case testcase: A shopper can complete an end-to-end purchase @smoke', async ({
     home, product, cart, nav
   }) => {
     await home.goto();
@@ -23,13 +23,15 @@ test.describe('Checkout', () => {
     expect(chargedAmount).toBe(cartTotal);
   });
 
-  test('purchase is blocked when name and card are empty', async ({ home, product, cart, nav }) => {
+  test('TC02-Purchase is blocked when name and card are empty Negative tescase', async ({ home, product, cart, nav }) => {
     await home.goto();
     await home.filterByCategory(PRODUCTS.monitor.category);
     await home.openProduct(PRODUCTS.monitor.name);
     await product.addToCart();
 
     await nav.openCart();
+    await expect.poll(async () => cart.itemCount()).toBe(1);
+    
     await cart.placeOrder();
     const alert = await cart.submitOrderExpectingValidation({ country: 'UK', city: 'London' });
     expect(alert).toContain('Please fill out Name and Creditcard');

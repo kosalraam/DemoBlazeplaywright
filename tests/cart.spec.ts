@@ -2,7 +2,7 @@ import { test, expect } from '../src/fixtures/test-options';
 import { PRODUCTS } from '../src/data/products';
 
 test.describe('Shopping cart', () => {
-  test('a product can be added to the cart @smoke', async ({ home, product, cart, nav }) => {
+  test('TC01-A product can be added to the cart @smoke', async ({ home, product, cart, nav }) => {
     await home.goto();
     await home.openProduct(PRODUCTS.phone.name);
     const message = await product.addToCart();
@@ -11,7 +11,9 @@ test.describe('Shopping cart', () => {
     await expect.poll(async () => cart.itemTitles()).toContain(PRODUCTS.phone.name);
   });
 
-  test('the cart total equals the sum of item prices', async ({ home, product, cart, nav }) => {
+
+
+  test('TC02-Boundary value testcase: The cart total equals the sum of item prices', async ({ home, product, cart, nav }) => {
     await home.goto();
     await home.openProduct(PRODUCTS.phone.name);
     await product.addToCart();
@@ -25,9 +27,10 @@ test.describe('Shopping cart', () => {
     await nav.openCart();
     await expect.poll(async () => cart.itemCount()).toBe(2);
     expect(await cart.total()).toBe(phonePrice + laptopPrice);
+    console.log(`Phone price: ${phonePrice}, Laptop price: ${laptopPrice}, Total: ${await cart.total()}`);
   });
 
-  test('a product can be removed from the cart', async ({ home, product, cart, nav }) => {
+  test('TC03-A product can be removed from the cart Negative tescase', async ({ home, product, cart, nav }) => {
     await home.goto();
     await home.openProduct(PRODUCTS.phone.name);
     await product.addToCart();
