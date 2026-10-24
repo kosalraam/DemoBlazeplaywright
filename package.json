@@ -12,6 +12,7 @@
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:chromium": "playwright test --project=chromium",
+    "open-report": "set JAVA_HOME=C:\\Program Files\\Java\\jdk-27.0.1.0.2&& npx allure serve allure-results",
     "test:firefox": "playwright test --project=firefox",
     "test:webkit": "playwright test --project=webkit",
     "test:api": "playwright test --project=api",
