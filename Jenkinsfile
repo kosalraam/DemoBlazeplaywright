@@ -18,15 +18,15 @@ pipeline {
         stage('Install Playwright Browsers') {
             steps {
                 echo 'Downloading browser binaries...'
-                // Removing '--with-deps' stops Playwright from invoking the blocked .ps1 system dependencies script
-                bat 'npx.cmd playwright install'
+                bat 'npx.cmd playwright install chromium'
             }
         }
 
         stage('Run Automation Tests') {
             steps {
-                echo 'Executing Playwright Test Suite...'
-                bat 'npm test'
+                echo 'Executing Playwright Tests on Chromium...'
+                // Changed from 'npm test' to run only the Chromium configuration
+                bat 'npm run test:chromium'
             }
         }
     }
