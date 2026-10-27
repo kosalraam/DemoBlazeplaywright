@@ -17,9 +17,9 @@ pipeline {
 
         stage('Install Playwright Browsers') {
             steps {
-                echo 'Downloading required browsers with Execution Policy Bypass...'
-                // This forces Windows to ignore the signature restriction for this execution block
-                bat 'powershell -ExecutionPolicy Bypass -Command "npx playwright install --with-deps"'
+                echo 'Downloading required browsers via CMD wrapper...'
+                // Using .cmd bypasses the unsigned .ps1 file restrictions entirely
+                bat 'npx.cmd playwright install --with-deps'
             }
         }
 
